@@ -1,1 +1,93 @@
+# in yml comments represented with "#" character.
+# it is very important to use a proper indentation in yml
+
+# -------------------------------------
+# Githab Actions Basics.
+# LongBook 1.
+#
+# Copyleft(c) by Aleksejs Polikarpovs.
+# --------------------------------------
+
+
+# This name will represent our pipeline, it might be different from our .yml file name.
+# It is recommended to don't use any whitespaces in the name.
+name: CI-CD-demo-pipeline
+
+# identify when it will trigger the workflow
+# we might use ctrl + space to trigger autocomplete functionality.
+# it will show list of all events 
+on: 
+
+  # we specify to run on push event
+  push: 
+    # it will run only on push to the main branch
+    branches: [ main ]
+    
+  # same with the pull request
+  pull_request:
+    branches: [ main ]
+    
+  # optionally we can specify inputs to the workflow.
+  workflow_dispatch:
+
+# Define some jobs that should run
+# we can think it as block of jobs to be executed
+jobs:
+
+  # we can think that build is a block of tasks to do 
+  # we can this block of tasks as we want, for example my_testing
+  Build:
+  
+    # each job will be executed on separate virtual machine which github will create
+    # basically github action will execute docker image which will run all steps in the current task 
+    # you can specify multiple "runners" for runs-on. In this case you need to put them in [] brackets 
+    runs-on: ubuntu-latest
+    
+    # steps are basically tasks to do
+    steps:
+      - uses: actions/checkout@v3
+        
+        # name of our step
+      - name: Compile
+        
+        # just a linux command in our case to print 
+        run: echo Imagine we are compling our code here!
+
+  DeployDev:
+    name: Deploy to Dev
+    if: github.event_name == 'pull_request'
+    needs: [Build]
+    runs-on: ubuntu-latest
+    environment:
+      name: Development
+      url: 'http://dev.myapp.com'
+    steps:
+      - name: Deploy
+        run: echo Your code is being deployed to dev.myapp.com!
+
+# Our deployment to Staging environment job
+  DeployStaging:
+    name: Deploy to DeployStaging
+    if: github.event.ref == 'refs/heads/main'
+    needs: [ Build ]
+    runs-on: ubuntu-latest
+    environment:
+      name: Staging
+      url: 'http://test.myapp.com'
+    steps:
+      - name: Deploy
+        run: echo Your code is being deployed to staging at http://test.myapp.com
+  
+# Our deployment to production job
+
+  DeployProduction:
+    name: Deploy to production
+    needs: [DeployStaging]
+    runs-on: ubuntu-latest
+    environment:
+      name: Production
+      url: 'http://www.myapp.com'
+    steps: 
+      - name: Deploy
+        run: echo The app is live at http://www.myapp.com
 
