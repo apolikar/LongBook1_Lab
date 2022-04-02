@@ -143,14 +143,5 @@ jobs:
           echo The app is live at http://www.myapp.com
 
   
-  # Test job 
-  TestingBuild:
-    name: Test build before Staging 
-    needs: [ DeployDev ]
-    runs-on: ubuntu-latest
-    environment:
-      name: Testing
-    steps:
-      - name: Test
-        run: echo Imagine your build ${{ env.DEPLOY_PACKAGE_NAME}} being tested.
+
        
