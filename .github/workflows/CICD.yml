@@ -58,7 +58,7 @@ jobs:
     
     # create local environment variable 
     env:
-      VAR1: "Build local variable"
+      VAR1: "LOCAL VARIABLE 1"
     
     # steps are basically tasks to do
     steps:
@@ -71,7 +71,13 @@ jobs:
         run: echo Imagine we are compling our code here!
         
       - name: Print local variable
-        run: echo Print local environment variable ${{ env.VAR1 }}
+        run: |
+          echo ${{ env.VAR1 }}
+          echo "$LOCAL_VAR"
+        
+        # this is another way how to declare local variable
+        env:
+          LOCAL_VAR: "LOCAL VARIABLE 2"   
 
   DeployDev:
     
