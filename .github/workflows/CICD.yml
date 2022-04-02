@@ -13,6 +13,15 @@
 # It is recommended to don't use any whitespaces in the name.
 name: CI-CD-demo-pipeline
 
+# we can create a global environment variable which will be accesable anywhere.
+env:
+  # environment variable to represent application name 
+  APPLICATION_NAME: "DemoCI_CD"
+  # environment variable to represent deploy version
+  # github.sha will return unique commit hash number
+  DEPLOY_PACKAGE_NAME: "demo-deploy-ver-${{ github.sha }}"
+  
+
 # identify when it will trigger the workflow
 # we might use ctrl + space to trigger autocomplete functionality.
 # it will show list of all events 
@@ -24,10 +33,13 @@ on:
     branches: [ main ]
     
   # same with the pull request
+  # we can use specify branches on new line with - 
   pull_request:
-    branches: [ main ]
+    branches: 
+      - main 
     
-  # optionally we can specify inputs to the workflow.
+  # maunaully trigger workflow.
+  # on GitHub press "Run Workflow" button
   workflow_dispatch:
 
 # Define some jobs that should run
@@ -59,7 +71,7 @@ jobs:
     name: Deploy to Dev
     
     # we can specify the logic when to run this job
-    # in our case we want to run DeployDev job if the GitHub receives pull request event
+    # in our case we want to run DeployDev job if the main branch receives pull request event
     if: github.event_name == 'pull_request'
     
     # specify which jobs need to be done to run a current job
@@ -70,7 +82,7 @@ jobs:
     
     runs-on: ubuntu-latest
     
-    # setup enviroment variable
+    # give a name to our environment
     environment:
       name: Development
       # specify url where application will be running in dev enviroment
@@ -79,6 +91,10 @@ jobs:
     steps:
       - name: Deploy
         run: echo Your code is being deployed to dev.myapp.com!
+      
+        
+        
+        
 
 # Our deployment to Staging environment job
   DeployStaging:
@@ -106,5 +122,9 @@ jobs:
       url: 'http://www.myapp.com'
     steps: 
       - name: Deploy
-        run: echo The app is live at http://www.myapp.com
+        # here we will use environment variable and print version being deployed 
+        run: |
+          echo "Application name: ${{ env.APPLICATION_NAME }}"
+          echo "Version number: ${{ env.DEPLOY_PACKAGE_NAME }}"
+          echo The app is live at http://www.myapp.com
 
