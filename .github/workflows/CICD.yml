@@ -56,15 +56,22 @@ jobs:
     # you can specify multiple "runners" for runs-on. In this case you need to put them in [] brackets 
     runs-on: ubuntu-latest
     
+    # create local environment variable 
+    env:
+      VAR1: "Build local variable"
+    
     # steps are basically tasks to do
     steps:
+      # select action to run 
       - uses: actions/checkout@v3
         
         # name of our step
       - name: Compile
-        
         # just a linux command in our case to print 
         run: echo Imagine we are compling our code here!
+        
+      - name: Print local variable
+        run: echo Print local environment variable ${{ env.VAR1 }}
 
   DeployDev:
     
