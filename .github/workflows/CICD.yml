@@ -71,6 +71,7 @@ jobs:
         run: echo Imagine we are compling our code here!
         
       - name: Print local variable
+        # notice we printing variables different ways 
         run: |
           echo ${{ env.VAR1 }}
           echo "$LOCAL_VAR"
@@ -141,3 +142,15 @@ jobs:
           echo "Version number: ${{ env.DEPLOY_PACKAGE_NAME }}"
           echo The app is live at http://www.myapp.com
 
+  
+  # Test job 
+  TestingBuild:
+    name: Test build before Staging 
+    needs: [ DeployDev ]
+    runs-on: ubuntu-latest
+    environment:
+      name: Testing
+    steps:
+      - name: Test
+        run: echo Imagine your build ${{ env.DEPLOY_PACKAGE_NAME}} being tested.
+       
